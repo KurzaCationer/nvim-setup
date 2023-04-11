@@ -72,7 +72,18 @@ return {
 				},
 			})
 
-			lsp.on_attach(function(client, bufnr)
+			local allow_format = { 'rust_analyzer', 'csharp_ls', 'null-ls' }
+			lsp.format_on_save({
+				format_opts = {
+					timeout_ms = 10000,
+				},
+				servers = {
+					['null-ls'] = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'lua' },
+					['csharp_ls'] = { 'csharp' },
+					['rust_analyzer'] = { 'rust' },
+				}
+			})
+			lsp.on_attach(function(_, bufnr)
 				local opts = function(desc) return { buffer = bufnr, remap = false, desc = desc, silent = true } end
 				vim.keymap.set("n", "gD", function() vim.lsp.buf.definition() end, opts('Go to definition'))
 				vim.keymap.set("n", "gd", function() vim.lsp.buf.declaration() end, opts('Go to declaration'))
@@ -89,7 +100,13 @@ return {
 					"n",
 					"<leader>fd",
 					function()
-						vim.lsp.buf.format({ async = true })
+						vim.lsp.buf.format({
+							async = true,
+							bufnr = bufnr,
+							filter = function(innerClient)
+								return vim.tbl_contains(allow_format, innerClient.name)
+							end
+						})
 					end,
 					opts('Format document'))
 				vim.keymap.set(
@@ -98,10 +115,14 @@ return {
 					function()
 						vim.lsp.buf.format({
 							async = true,
+							bufnr = bufnr,
 							range = {
 								["start"] = vim.api.nvim_buf_get_mark(0, "<"),
 								["end"] = vim.api.nvim_buf_get_mark(0, ">"),
-							}
+							},
+							filter = function(innerClient)
+								return vim.tbl_contains(allow_format, innerClient.name)
+							end
 						})
 					end,
 					opts('Format selection'))
@@ -130,5 +151,35 @@ return {
 				cmp_autopairs.on_confirm_done({ map_char = { tex = "" } })
 			)
 		end
-	}
+	},
+	{
+		"jose-elias-alvarez/null-ls.nvim",
+		event = { "BufReadPre", "BufNewFile" },
+		dependencies = {
+			"williamboman/mason.nvim",
+			"jay-babu/mason-null-ls.nvim",
+		},
+		opts = {
+			sources = {
+				-- Anything not supported by mason.
+			}
+		}
+	},
+	{
+		"jay-babu/mason-null-ls.nvim",
+		dependencies = {
+			"williamboman/mason.nvim",
+			'VonHeikemen/lsp-zero.nvim',
+		},
+		opts = {
+			automatic_installation = false,
+			handlers = {
+				ensure_installed = {
+					-- Opt to list sources here, when available in mason.
+				},
+				automatic_installation = false,
+				handlers = {},
+			},
+		}
+	},
 }

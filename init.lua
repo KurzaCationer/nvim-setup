@@ -1,4 +1,2 @@
-
 -- Setup lazy.vim
-require'config.lazy'
-
+require 'config.lazy'

@@ -38,5 +38,5 @@ require("lazy").setup({
     },
 })
 
-require'config.vim'
-require'config.maps'
+require 'config.vim'
+require 'config.maps'

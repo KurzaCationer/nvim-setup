@@ -6,13 +6,11 @@ return {
         cmd = "Telescope",
         lazy = true,
         dependencies = { 'nvim-lua/plenary.nvim' },
-        config = function()
-            require 'telescope'.setup {
-                defaults = {
-                    file_ignore_patterns = { ".git", "node_modules" }
-                }
+        opts = {
+            defaults = {
+                file_ignore_patterns = { ".git", "node_modules" }
             }
-        end,
+        },
     },
     {
         "nvim-telescope/telescope-file-browser.nvim",
