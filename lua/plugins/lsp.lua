@@ -72,15 +72,18 @@ return {
 				},
 			})
 
-			local allow_format = { 'rust_analyzer', 'csharp_ls', 'null-ls' }
+			lsp.setup_servers({'dartls', force = true})
+
+			local allow_format = { 'rust_analyzer', 'csharp_ls', 'null-ls', 'dartls', 'markdownlint' }
 			lsp.format_on_save({
 				format_opts = {
 					timeout_ms = 10000,
 				},
 				servers = {
-					['null-ls'] = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'lua' },
+					['null-ls'] = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'lua', 'markdown', 'markdown.mdx' },
 					['csharp_ls'] = { 'csharp' },
 					['rust_analyzer'] = { 'rust' },
+					['dartls'] = { 'dart' },
 				}
 			})
 			lsp.on_attach(function(_, bufnr)
@@ -105,7 +108,8 @@ return {
 							bufnr = bufnr,
 							filter = function(innerClient)
 								return vim.tbl_contains(allow_format, innerClient.name)
-							end
+							end,
+							timeout_ms = 10000
 						})
 					end,
 					opts('Format document'))
@@ -122,7 +126,8 @@ return {
 							},
 							filter = function(innerClient)
 								return vim.tbl_contains(allow_format, innerClient.name)
-							end
+							end,
+							timeout_ms = 10000
 						})
 					end,
 					opts('Format selection'))
