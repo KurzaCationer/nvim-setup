@@ -20,7 +20,8 @@ return {
 			{ 'L3MON4D3/LuaSnip' },    -- Required
 			{ 'rafamadriz/friendly-snippets' }, -- Optional
 			{ 'ray-x/lsp_signature.nvim' },
-			{ 'Decodetalkers/csharpls-extended-lsp.nvim' }
+			{ 'Decodetalkers/csharpls-extended-lsp.nvim' },
+			{ 'nvim-treesitter/nvim-treesitter' }
 		},
 		config = function()
 			local lsp = require 'lsp-zero'
@@ -72,7 +73,7 @@ return {
 				},
 			})
 
-			lsp.setup_servers({'dartls', force = true})
+			lsp.setup_servers({ 'dartls', force = true })
 
 			local allow_format = { 'rust_analyzer', 'csharp_ls', 'null-ls', 'dartls', 'markdownlint' }
 			lsp.format_on_save({
@@ -80,10 +81,12 @@ return {
 					timeout_ms = 10000,
 				},
 				servers = {
-					['null-ls'] = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'lua', 'markdown', 'markdown.mdx' },
+					['null-ls'] = { 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'lua', 'markdown',
+						'markdown.mdx' },
 					['csharp_ls'] = { 'csharp' },
 					['rust_analyzer'] = { 'rust' },
 					['dartls'] = { 'dart' },
+					['svelte-language-server'] = { 'svelte' },
 				}
 			})
 			lsp.on_attach(function(_, bufnr)
@@ -187,4 +190,59 @@ return {
 			},
 		}
 	},
+	{
+		"nvim-treesitter/nvim-treesitter",
+		config = function(_, opts)
+			require("nvim-treesitter.configs").setup({
+				ensure_installed = {
+					"bash",
+					"c",
+					"cpp",
+					"css",
+					"c_sharp",
+					"dart",
+					"dockerfile",
+					"elixir",
+					"fish",
+					"graphql",
+					"go",
+					"gomod",
+					"html",
+					"javascript",
+					"json",
+					"lua",
+					"markdown",
+					"markdown_inline",
+					"php",
+					"python",
+					"regex",
+					"ruby",
+					"rust",
+					"scss",
+					"sql",
+					"svelte",
+					"toml",
+					"tsx",
+					"typescript",
+					"vim",
+					"yaml",
+				},
+				highlight = { enable = true },
+				indent = { enable = true },
+				autotag = {
+					enable = true,
+					filetypes = {
+						"html",
+						"javascript",
+						"javascriptreact",
+						"svelte",
+						"typescript",
+						"typescriptreact",
+						"vue",
+						"xml",
+					},
+				},
+			})
+		end,
+	}
 }
