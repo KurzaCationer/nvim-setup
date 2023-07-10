@@ -225,6 +225,7 @@ return {
 					"tsx",
 					"typescript",
 					"vim",
+					"wgsl",
 					"yaml",
 				},
 				highlight = { enable = true },
